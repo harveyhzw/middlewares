@@ -11,10 +11,8 @@ public class CuratorCRUDDemo {
         /*
         * 重试策略：Curator内部实现的几种重试策略:
         * ExponentialBackoffRetry:重试指定的次数, 且每一次重试之 间停顿的时间逐渐增加.
-        * RetryNTimes:指定最大重试次数的重试策略 • RetryOneTime:仅重试一次
-        * RetryUntilElapsed:一直重试直到达到规定的时间重试策略：Curator内部实现的几种重试策略:
-        * ExponentialBackoffRetry:重试指定的次数, 且每一次重试之 间停顿的时间逐渐增加.
-        * RetryNTimes:指定最大重试次数的重试策略 • RetryOneTime:仅重试一次
+        * RetryNTimes:指定最大重试次数的重试策略
+        * RetryOneTime:仅重试一次
         * RetryUntilElapsed:一直重试直到达到规定的时间
         * */
         CuratorFramework curatorFramework = CuratorFrameworkFactory.builder().
