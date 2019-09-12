@@ -1,1 +1,4 @@
-zookeeper/target
+zookeeper/*.iml
+zookeeper/.idea
+zookeeper/.idea/
+zookeeper/target/
