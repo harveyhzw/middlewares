@@ -1,15 +1,14 @@
 package com.harvey.kafkaconsumer.KafkaConsumer;
 
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.common.PartitionInfo;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
 
 public class KafkaConsumerAnalysis {
     public static final String brokerList = "192.168.6.122:9092";
@@ -32,9 +31,40 @@ public class KafkaConsumerAnalysis {
     public static void main(String[] args) {
         Properties properties = initConfig();
 
+        // not thread safe
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
 
-        consumer.subscribe(Arrays.asList(topic));
+        //subscribe partitions
+        List<TopicPartition> partitions = new ArrayList<>();
+        List<PartitionInfo> partitionInfos = consumer.partitionsFor(topic);
+        if (partitionInfos != null){
+            for(PartitionInfo pInfo : partitionInfos){
+                partitions.add(new TopicPartition(pInfo.topic(), pInfo.partition()));
+            }
+        }
+        consumer.assign(partitions);
+
+        //re-balance
+
+        /*consumer.subscribe(Arrays.asList(topic), new ConsumerRebalanceListener() {
+            @Override
+            public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
+                consumer.commitSync();
+
+            }
+
+            @Override
+            public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+
+            }
+        });*/
+
+
+        //consumer.subscribe(Arrays.asList(topic));
+
+        //consumer.subscribe(Pattern.compile("topic-.*"));
+
+        //consumer.unsubscribe();
 
         try {
 
@@ -51,6 +81,12 @@ public class KafkaConsumerAnalysis {
                     // to do
 
                 }
+
+                consumer.commitSync();
+                //consumer.seek(paration, 10);
+                //consumer.seekToBeginning();
+                //consumer.seekToEnd();
+                //consumer.offsetsForTimes()
             }
 
         } catch (Exception e) {
